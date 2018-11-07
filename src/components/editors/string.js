@@ -1,10 +1,17 @@
 import React from 'react';
 
-const TextEditor = ({ id, type, value, placeholder, required, onChange }) => {
+const TextEditor = ({ id, type, value, placeholder, required, isValid, touched, onChange }) => {
+    const classNames = ['form-control']
+    if (touched && isValid) {
+        classNames.push('is-valid');
+    } else if (touched && !isValid) {
+        classNames.push('is-invalid');
+    }
+
     return (
         <input
             id={id}
-            className="form-control"
+            className={classNames.join(' ')}
             type={type}
             value={value}
             onChange={onChange}

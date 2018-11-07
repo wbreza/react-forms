@@ -15,7 +15,15 @@ class App extends Component {
                 properties: {
                     firstName: {
                         type: 'string',
-                        label: 'First Name'
+                        label: 'First Name',
+                        validation: {
+                            required: true,
+                            length: {
+                                min: 2,
+                                max: 16,
+                                message: 'First Name must be between 2-16 characters'
+                            }
+                        }
                     },
                     lastName: {
                         type: 'string',
@@ -51,7 +59,8 @@ class App extends Component {
                     },
                     password: {
                         type: 'password',
-                        label: 'Password'
+                        label: 'Password',
+                        editor: 'string'
                     }
                 },
                 required: ['username', 'password']
@@ -65,12 +74,12 @@ class App extends Component {
     render() {
         return (
             <div className="container">
-                <Form ref="form1" schema={this.state.form2} value={this.state.form2Value} /> 
+                <Form ref="form1" schema={this.state.form2} value={this.state.form2Value} />
                 <hr />
                 <Form schema={this.state.form1} />
             </div>
-                );
-            }
-        }
-        
-        export default App;
+        );
+    }
+}
+
+export default App;

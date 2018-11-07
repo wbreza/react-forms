@@ -1,22 +1,18 @@
 import React from 'react';
 
 export default class Field extends React.Component {
+    state = {
+        form: this.props.form,
+        property: this.props.property,
+        validator: this.props.validator,
+        elementId: `${this.props.form.name}-${this.props.property.name}`,
+        value: this.props.value || '',
+        touched: false,
+        isValid: false,
+        errors: []
+    };
 
-    constructor(props, context) {
-        super(props, context);
-
-        this.state = {
-            form: this.props.form,
-            property: this.props.property,
-            elementId: `${this.props.form.name}-${this.props.property.name}`,
-            value: this.props.value || ''
-        };
-
-        this.getEditor = this.getEditor.bind(this);
-        this.onFieldChange = this.onFieldChange.bind(this);
-    }
-
-    getEditor() {
+    getEditor = () => {
         let editor = null;
         const editorType = this.state.property.editor || this.state.property.type;
         try {
@@ -30,22 +26,30 @@ export default class Field extends React.Component {
         return editor.default;
     }
 
-    componentDidMount() {
+    validate = (value) => {
+        return this.state.validator.validate(value)
+            .then(errors => {
+                this.setState({
+                    errors: errors,
+                    isValid: errors.length === 0
+                });
 
+                return errors;
+            });
     }
 
-    componentDidUpdate(prevProps) {
-
-    }
-
-    onFieldChange(e) {
-        this.setState({
-            value: e.target.value
-        }, () => {
-            this.props.onChange({
-                key: this.state.property.name,
-                value: this.state.value
-            })
+    onFieldChange = (e) => {
+        const formValue = e.target.value;
+        this.validate(formValue).then(() => {
+            this.setState({
+                value: formValue,
+                touched: true
+            }, () => {
+                this.props.onChange({
+                    key: this.state.property.name,
+                    value: this.state.value
+                });
+            });
         });
     }
 
@@ -61,8 +65,11 @@ export default class Field extends React.Component {
                     value={this.state.value}
                     onChange={this.onFieldChange}
                     required={this.state.property.required}
+                    isValid={this.state.isValid}
+                    touched={this.state.touched}
                     placeholder={this.state.property.label} />
                 {this.state.property.description && <small className="form-text text-muted">{this.state.property.description}</small>}
+                {this.state.errors.length > 0 && <div className="invalid-feedback">{this.state.errors[0].message}</div>}
             </div>
         );
     }
