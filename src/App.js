@@ -27,7 +27,14 @@ class App extends Component {
                     },
                     lastName: {
                         type: 'string',
-                        label: 'Last Name'
+                        label: 'Last Name',
+                        validation: {
+                            required: true,
+                            length: {
+                                min: 2,
+                                message: 'Last name must be at least 2 characters'
+                            }
+                        }
                     },
                     email: {
                         type: 'string',
